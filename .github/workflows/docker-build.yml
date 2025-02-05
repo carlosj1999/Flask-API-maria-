@@ -1,0 +1,23 @@
+name: Build and Push Docker Image to GHCR
+
+on:
+  push:
+    branches:
+      - main  # Run this workflow on every push to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Log in to GitHub Container Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    - name: Build Docker image
+      run: docker build -t ghcr.io/${{ github.repository_owner }}/flask-payment-api:latest .
+
+    - name: Push Docker image to GHCR
+      run: docker push ghcr.io/${{ github.repository_owner }}/flask-payment-api:latest
